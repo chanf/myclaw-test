@@ -5,6 +5,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { useStore } from '@/store/useStore';
 import { api } from '@/lib/api';
 import { Save, Eye, EyeOff } from 'lucide-react';
+import ExportButton from './ExportButton';
 
 export default function Editor() {
   const { currentNote, setCurrentNote, isAIPanelOpen, toggleAIPanel } = useStore();
@@ -50,15 +51,18 @@ export default function Editor() {
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="无标题"
-          className="w-full text-2xl font-bold bg-transparent border-none outline-none text-gray-900 dark:text-white placeholder-gray-400"
+          className="flex-1 text-2xl font-bold bg-transparent border-none outline-none text-gray-900 dark:text-white placeholder-gray-400"
         />
-        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <ExportButton />
+      </div>
+      <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
           {saving && (
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />

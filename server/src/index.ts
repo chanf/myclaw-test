@@ -6,6 +6,7 @@ import noteRoutes from './routes/notes';
 import aiRoutes from './routes/ai';
 import folderRoutes from './routes/folders';
 import searchRoutes from './routes/search';
+import exportRoutes from './routes/export';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use('/api/notes', noteRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/folders', folderRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/export', exportRoutes);
 
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
