@@ -12,7 +12,7 @@ export const getFolderTree = (req: Request, res: Response) => {
   const db = getDatabase();
   
   const buildTree = (parentId: number | null = null): any[] => {
-    const folders = db.prepare(`
+    const query = `
       SELECT 
         f.*,
         COUNT(n.id) as notes_count
@@ -21,12 +21,16 @@ export const getFolderTree = (req: Request, res: Response) => {
       WHERE f.parent_id ${parentId ? '= ?' : 'IS NULL'}
       GROUP BY f.id
       ORDER BY f.name
-    `).all(parentId || null).map((folder: any) => ({
+    `;
+    
+    const folders = parentId 
+      ? db.prepare(query).all(parentId)
+      : db.prepare(query).all();
+    
+    return folders.map((folder: any) => ({
       ...folder,
       children: buildTree(folder.id)
     }));
-
-    return folders;
   };
 
   const tree = buildTree();

@@ -59,8 +59,8 @@ const callAzureOpenAI = async (action: string, content: string, language?: strin
     throw new Error(`Azure OpenAI API error: ${response.status} - ${errorText}`);
   }
 
-  const data = await response.json();
-  const aiContent = data.choices[0]?.message?.content || 'No response from AI';
+  const data: any = await response.json();
+  const aiContent = data.choices?.[0]?.message?.content || 'No response from AI';
 
   return {
     success: true,
