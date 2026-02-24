@@ -2,6 +2,16 @@
 
 一个基于 AI 的沉浸式笔记应用，支持 Markdown 编辑、文件夹分类、标签系统和 AI 辅助写作功能。
 
+## 🚀 快速部署
+
+| 部署平台 | 链接 |
+|-----------|------|
+| **本地部署** | [QUICKSTART.md](QUICKSTART.md) |
+| **Cloudflare** | [CLOUDFLARE_QUICKSTART.md](CLOUDFLARE_QUICKSTART.md) ⚠️ |
+| **Railway** | [DEPLOYMENT.md](DEPLOYMENT.md) |
+
+> **注意**：Cloudflare 部署需要将后端从 Express 重构为 Hono，详见 [CLOUDFLARE_STATUS.md](CLOUDFLARE_STATUS.md)
+
 ## 技术栈
 
 ### 前端
