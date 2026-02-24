@@ -1,41 +1,60 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { initDatabase } from './db/database';
-import noteRoutes from './routes/notes';
-import aiRoutes from './routes/ai';
-import folderRoutes from './routes/folders';
-import searchRoutes from './routes/search';
-import exportRoutes from './routes/export';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { Env } from './types';
+import { DatabaseService } from './db';
+import { createNoteRoutes } from './routes/notes';
+import { createFolderRoutes } from './routes/folders';
+import { createAIRoutes } from './routes/ai';
+import { createSearchRoutes } from './routes/search';
 
-dotenv.config();
+const app = new Hono<{ Bindings: Env }>();
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// Middleware
+app.use('*', cors({
+  origin: '*',
+  credentials: true
+}));
+app.use('*', logger());
 
-app.use(cors());
-app.use(express.json());
-
-app.use('/api/notes', noteRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/folders', folderRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/api/export', exportRoutes);
-
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// Health check
+app.get('/health', (c) => {
+  return c.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString() 
+  });
 });
 
-const startServer = async () => {
-  try {
-    await initDatabase();
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
+// Initialize database and routes
+app.use('*', async (c, next) => {
+  const db = c.env.DB;
+  const dbService = new DatabaseService(db);
+  
+  // Store dbService in context for use in routes
+  c.set('dbService', dbService);
+  
+  await next();
+});
 
-startServer();
+// Routes
+app.use('/api/notes', async (c, next) => {
+  const dbService = c.get('dbService') as DatabaseService;
+  const notesRoutes = createNoteRoutes(dbService);
+  return notesRoutes.fetch(c.req.raw, c.env, c.executionCtx);
+});
+
+app.use('/api/folders', async (c, next) => {
+  const dbService = c.get('dbService') as DatabaseService;
+  const foldersRoutes = createFolderRoutes(dbService);
+  return foldersRoutes.fetch(c.req.raw, c.env, c.executionCtx);
+});
+
+app.use('/api/ai', createAIRoutes());
+
+app.use('/api/search', async (c, next) => {
+  const dbService = c.get('dbService') as DatabaseService;
+  const searchRoutes = createSearchRoutes(dbService);
+  return searchRoutes.fetch(c.req.raw, c.env, c.executionCtx);
+});
+
+export default app;
