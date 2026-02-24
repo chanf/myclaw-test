@@ -111,6 +111,31 @@ npm run build
 npm start
 ```
 
+## 部署到 Cloudflare
+
+项目支持一键部署到 Cloudflare：
+
+```bash
+# 安装 wrangler CLI
+npm install -g wrangler
+
+# 登录 Cloudflare
+wrangler login
+
+# 运行部署脚本
+./deploy-cloudflare.sh
+```
+
+详细部署文档请参考 [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md)
+
+### Cloudflare 部署说明
+
+- **前端**：Cloudflare Pages (Next.js)
+- **后端**：Cloudflare Workers (需要使用 Hono 重构)
+- **数据库**：Cloudflare D1 (SQLite)
+
+**注意**：Cloudflare Workers 不支持 Express，需要使用 Hono 框架重写后端代码。详见 Cloudflare 部署文档。
+
 ## 项目结构
 
 ```

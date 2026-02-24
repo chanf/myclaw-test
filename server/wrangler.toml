@@ -1,0 +1,12 @@
+name = "ai-note-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+AZURE_API_VERSION = "2024-05-01-preview"
+AZURE_DEPLOYMENT_NAME = "Gpt-4o"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ai-note-db"
+database_id = "<replace-with-your-database-id>"
